@@ -31,9 +31,9 @@ const ProductTable: React.FC = () => {
   const [paginationData, setPaginationData] = useState<PaginationData | null>(null);
   const [first, setFirst] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<number>(0); 
-  const [rows, setRows] = useState<number>(12); 
+  const [rows, _setRows] = useState<number>(12); 
   const [quotient , setQuotient] = useState<number>(0)
-  const [remainder , setRemainder] = useState<number>(0)
+  const [_remainder , setRemainder] = useState<number>(0)
   const [visitedpage , setVisitedPage] = useState<number[]>([])
   const op = useRef<OverlayPanel>(null);
   let [rowsperpage , setRowsPerPage] = useState<number[]>([])
