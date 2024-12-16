@@ -32,7 +32,7 @@ const ProductTable: React.FC = () => {
   const [first, setFirst] = useState<number>(0);
   const [selectedRows, setSelectedRows] = useState<number>(0); 
   const [rows, _setRows] = useState<number>(12); 
-  const [quotient , setQuotient] = useState<number>(0)
+  const [quotient , setQuotient] = useState<number>(-1)
   const [_remainder , setRemainder] = useState<number>(0)
   const [visitedpage , setVisitedPage] = useState<number[]>([])
   const op = useRef<OverlayPanel>(null);
@@ -53,15 +53,16 @@ const ProductTable: React.FC = () => {
   }, []);
   useEffect(() => {
 
+    if(quotient != -1){
       handlePersist(paginationData?.current_page || 1);
-        
-
+    }
+      
   }, [paginationData?.current_page]); 
   useEffect(() => {
 
-      
-      setSelectedProds();
-        
+    console.log("in");
+
+    setSelectedProds();
 
   }, [ selectedRows]); 
   const onPageChange = async (event: { first: number; rows: number }) => {
@@ -136,7 +137,9 @@ const ProductTable: React.FC = () => {
 
 
   return (
-    <div className='p-10 flex justify-center items-center flex-col'>
+    <div className='p-10 flex justify-center items-center flex-col card relative'>
+
+
       <DataTable
         value={products}
         selectionMode="multiple"
@@ -145,36 +148,40 @@ const ProductTable: React.FC = () => {
         dataKey="id"
         tableStyle={{ minWidth: '50rem' }}
       >
-        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}></Column>
-        <Column field="name" header="Code"></Column>
+        
+        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }}>
+
+        </Column>
+
+        <Column
+          field="name"
+          header={
+            <div className="flex items-center">
+              <Button
+                type="button"
+                icon="pi pi-chevron-down"
+                onClick={(e) => {
+                  op.current?.toggle(e);
+                  setSelectedProducts([]);
+                  setQuotient(0);
+                  setRemainder(0);
+                  setVisitedPage([]);
+                }}
+                style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }}
+              />
+              <span>Code</span>
+            </div>
+          }
+        ></Column>
         <Column field="place_of_origin" header="Place of Origin"></Column>
         <Column field="artist_display" header="Artist Display"></Column>
         <Column field="inscriptions" header="Inscriptions"></Column>
         <Column field="date_start" header="Date Start"></Column>
         <Column field="date_end" header="Date End"></Column>
+        
       </DataTable>
+      
 
-      <div
-        style={{
-          position: 'absolute',
-          top: '2px',
-          left: 'calc(5%)',
-          zIndex: 10,
-        }}
-      >
-        <Button
-          type="button"
-          icon="pi pi-chevron-down"
-          onClick={(e) => {
-            op.current?.toggle(e);
-            setSelectedProducts([]);
-            setQuotient(0);
-            setRemainder(0);
-            setVisitedPage([]);
-          }}
-          style={{ width: '1rem', height: '1rem' , marginTop : '80px' }}
-        />
-      </div>
 
       <OverlayPanel ref={op}>
       <div style={{ padding: '2px', maxWidth: '80px', maxHeight: '60px'  }}>
@@ -187,6 +194,7 @@ const ProductTable: React.FC = () => {
         onValueChange={(e) => setSelectedRows(e.value || 0)}
         min={1}
         max={100}
+        defaultValue={0}
         style={{ width: '100%', fontSize: '0.8rem', padding: '3px' }}
       />
     </div>
