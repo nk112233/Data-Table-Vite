@@ -85,7 +85,7 @@ const ProductTable: React.FC = () => {
 
   const handlePersist = (page : number) => {
     console.log("curr pageo " , page , selectedProducts , visitedpage[page-1]);
-    if(!visitedpage[page-1]){
+    if(!visitedpage[page-1] && rowsperpage[page-1]){
       console.log("curr page " , page , selectedProducts);
       let arrayofSelectedRows: Product[] = products.slice(0, rowsperpage[page-1]);
       setSelectedProducts((prevSelectedProducts) => [
