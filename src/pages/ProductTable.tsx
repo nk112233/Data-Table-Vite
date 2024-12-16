@@ -49,6 +49,7 @@ const ProductTable: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log("bin" , selectedRows);
     getProducts();
   }, []);
   useEffect(() => {
@@ -59,10 +60,10 @@ const ProductTable: React.FC = () => {
       
   }, [paginationData?.current_page]); 
   useEffect(() => {
-
-    console.log("in");
-
-    setSelectedProds();
+    if(quotient != -1){
+      console.log("in" , selectedRows);
+      setSelectedProds();
+  }
 
   }, [ selectedRows]); 
   const onPageChange = async (event: { first: number; rows: number }) => {
@@ -192,7 +193,7 @@ const ProductTable: React.FC = () => {
         id="rows"
         value={selectedRows}
         onValueChange={(e) => setSelectedRows(e.value || 0)}
-        min={1}
+        min={0}
         max={100}
         defaultValue={0}
         style={{ width: '100%', fontSize: '0.8rem', padding: '3px' }}
