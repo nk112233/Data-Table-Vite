@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import axios from "axios";
-import { Paginator } from 'primereact/paginator';
+import { Paginator ,  PaginatorPageChangeEvent } from 'primereact/paginator';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Button } from 'primereact/button';
 import { InputNumber } from 'primereact/inputnumber';
@@ -49,9 +49,10 @@ const ProductTable: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("bin" , selectedRows);
     getProducts();
   }, []);
+
+
   useEffect(() => {
 
     if(quotient != -1){
@@ -59,25 +60,27 @@ const ProductTable: React.FC = () => {
     }
       
   }, [paginationData?.current_page]); 
+
+
   useEffect(() => {
     if(quotient != -1){
-      console.log("in" , selectedRows);
-      setSelectedProds();
+      handleRowsPerPage();
   }
 
   }, [ selectedRows]); 
-  const onPageChange = async (event: { first: number; rows: number }) => {
+
+
+
+  const onPageChange = async (event: PaginatorPageChangeEvent) => {
     try {
-      let prevpage:number = paginationData?.current_page || 1
+
+
       const page = (event.first / event.rows) + 1;
 
       const res = await axios.get(`https://api.artic.edu/api/v1/artworks?page=${page}`);
       
       setProducts(res.data.data);
       setPaginationData(res.data.pagination);
-      console.log("prev page " , rowsperpage[prevpage-1] , selectedProducts)
-      // rowsperpage[prevpage-1] = selectedProducts.length 
-      // await(handlePersist(page))
       setFirst(event.first);
       
     } catch (error) {
@@ -85,10 +88,11 @@ const ProductTable: React.FC = () => {
     }
   };
 
+
+
   const handlePersist = (page : number) => {
-    console.log("curr pageo " , page , selectedProducts , visitedpage[page-1]);
+
     if(!visitedpage[page-1] && rowsperpage[page-1]){
-      console.log("curr page " , page , selectedProducts);
       let arrayofSelectedRows: Product[] = products.slice(0, rowsperpage[page-1]);
       setSelectedProducts((prevSelectedProducts) => [
         ...prevSelectedProducts,
@@ -101,11 +105,10 @@ const ProductTable: React.FC = () => {
     });
     }
   }
-  // const handleSetRows = () => {
 
-  // };
 
-  const setSelectedProds = () => {
+
+  const handleRowsPerPage = () => {
     let q = 0
     let r =  0
     if(quotient == 0 ){
@@ -121,15 +124,13 @@ const ProductTable: React.FC = () => {
     temp.push(r);
     
     setRowsPerPage(temp)
-    console.log("in handlesetrows ");
+
     
     let currpage:number = (paginationData?.current_page || 1) - 1 
-    console.log("rsps " , rowsperpage)
     let arrayofSelectedRows: Product[] = products.slice(0, rowsperpage[currpage]);
     setSelectedProducts(arrayofSelectedRows)  
     let totalLength = q + r;
     let temp1: number[] = Array.from({ length: totalLength }, () => 0);
-    console.log("tl " , totalLength , temp1);
     temp1[0] = 1;
     setVisitedPage(temp1);
     op.current?.hide();
@@ -137,8 +138,19 @@ const ProductTable: React.FC = () => {
   }
 
 
+
   return (
-    <div className='p-10 flex justify-center items-center flex-col card relative'>
+<div
+  style={{
+    display: "flex",
+    position: "relative",
+    padding: "2.5rem",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+
 
 
       <DataTable
@@ -157,7 +169,7 @@ const ProductTable: React.FC = () => {
         <Column
           field="name"
           header={
-            <div className="flex items-center">
+            <div style={{"display":"flex","alignItems":"center"}}>
               <Button
                 type="button"
                 icon="pi pi-chevron-down"
@@ -168,7 +180,7 @@ const ProductTable: React.FC = () => {
                   setRemainder(0);
                   setVisitedPage([]);
                 }}
-                style={{ width: '1rem', height: '1rem', marginRight: '0.5rem' }}
+                style={{ width: '1rem', height: '1rem', marginRight: '0.5rem', color: 'white'}}
               />
               <span>Code</span>
             </div>
@@ -185,7 +197,7 @@ const ProductTable: React.FC = () => {
 
 
       <OverlayPanel ref={op}>
-      <div style={{ padding: '2px', maxWidth: '80px', maxHeight: '60px'  }}>
+      <div style={{ padding: '2px', maxWidth: '80px', maxHeight: '100px'  }}>
   <div className="p-fluid" style={{ gap: '0px' }}>
     <div className="p-field" style={{ marginBottom: '2px' }}>
       <label htmlFor="rows" style={{ fontSize: '0.6rem' }}>Rows</label>
@@ -201,7 +213,7 @@ const ProductTable: React.FC = () => {
     </div>
     <Button
       label="Set"
-      onClick={setSelectedProds}
+      onClick={handleRowsPerPage}
       style={{ fontSize: '0.7rem', padding: '3px', height: '1.5rem' }}
     />
   </div>
